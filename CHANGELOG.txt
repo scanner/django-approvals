@@ -1,0 +1,8 @@
+=============================
+django-approvals changelog
+=============================
+
+Version 0.1, 14 September 2008:
+--------------------------
+
+* Initial release

@@ -1,0 +1,250 @@
+================
+Django approvals
+================
+
+This is a simple approvals process application for Django.  It is
+designed to allow processes that require some form of 3rd party
+approval before they released or finished.
+
+Django: http://www.djangoproject.com/
+
+The canonical location for django-approvals is:
+
+   http://svn.apricot.com/django-approvals/
+
+Overview
+========
+
+Typically apps that have an 'approval' step for those processes have
+to implement how this approval is done in each app.
+
+What the approvals app enables is that when some process has been
+submitted, but before it is approved, an 'Approval' object is created.
+
+At that time some subset of the users of the site are sent a
+email/notification that some process is now awaiting an approval. The
+message contains the URL to visit to process that specific approval.
+
+When the approval is allowed, a custom Django signal is sent:
+approvals.models.approval_acted_on with the sender being the Approval
+object that was just approved.
+
+Your process that is waiting for an approval watches for this
+signal. When it gets it, your process checks to see if
+'needs_approval' attribute of the Approval object is what you are
+waiting for approval on. If the 'approved' attribute of the Approval
+object is 'True' then the process was approved.
+
+NOTE: There is a limitation right now in that the list of users that
+      we send the approval message to is only those with is_staff set
+      to be True. A more user-generic list feature will be added.
+
+Installation
+============
+
+In order to use djang-approvals you will need to a post-1.0 version of
+Django.
+
+django-approvals is available via subversion at:
+
+   http://svn.apricot.com/public/django-approvals/
+
+It comes with a standard python distutils setup.py file. To install:
+
+   python setup.py install
+
+This will install django-approvals into a directory on your Python
+import path. For system-wide installation on Linux/Unix and Mac OS you
+can prefix the above command with the 'sudo' command.
+
+Alternatively, you do a Subversion checkout to get the latest
+development code:
+
+    svn co http://svn.apricot.com/public/django-approvals/trunk/approvals
+
+For best results, do this in a directory that's on your Python path.
+
+Basic use
+=========
+
+To use the approvals system with all its default settings, you'll
+need to do the following:
+
+1. Add 'approvals' to the 'INSTALLED_APPS' setting of your
+   Django project.
+
+2. Create the necessary templates (see the section on templates below
+   for details).
+
+3. Hook the creation of approvals.models.Approval in to your app that
+   needs something to be approved before moving on to the next step
+
+4. Register a listener for the approvals.models.approval_acted_on
+   signal that will move your process on to its next step after it has
+   been approved or denied.
+
+5. Add this line to your site's root URLConf::
+   
+       (r'^approvals/', include('approvals.urls')),
+
+
+Templates used by django-approvals
+==================================
+
+Currently there is only one view in django-approvals - the view for
+the processes of acting on a approval. However, there are three
+templates:
+
+* 'approvals/act_on_approval.html' -- displays the form for approving
+  a specific request.
+
+* 'approvals/approval_request_subj.txt' -- the subject to use in the
+  email/notification to the users that can approve a specific request.
+
+* 'approvals/approval_request_email.txt' -- the body to use in the 
+  email/notification to the users that can approve a specific request.
+
+If you want a view that shows all or some subset of approvals then you
+can start with the generic object list view that django provides.
+
+Examples of these templates are not provided; you will need to create
+them yourself. How a template fits in to a specific project is
+frequently too tailored to a specific project to provide templates
+that work with anyone.
+
+Additionally the approvals app comes with a URLConf and sub-classes of
+registration.forms.RegistrationForm for hooking an approval process in
+to Jeremy Bennett's django-registration app for approving users that
+are registering.
+
+These are in the modules 'approvals.accounts_urls' and
+'approvals.forms'.  You can use 'approvals.accounts_urls' instead of
+'registration.urls' in your project's urls.py file.
+
+NOTE: This requires a small patch to version 0.6 of
+      registration.models to create a method on the
+      RegistrationProfile model for sending the registration
+      activation email after a registration has been approved. See the
+      file 'registration.patch' in the django-approvals directory.
+
+The line you would add to your project's urls.py to have the
+django-registration app require approval before sending out an
+accounts activation email would be:
+
+    (r'^accounts/', include('approvals.accounts_urls'))
+
+How it works
+============
+
+When some other app wants to require an approval process for some
+action it creates an Approval object:
+
+from approvals.models import Approval
+
+    ... setting up someting like creating an account or blog post
+
+    new_approval = Approval(needs_approval = <your object instance here>)
+    new_approval.save()
+
+The key thing is that you are passing to the Approval object an
+instance of the object that you want some sort of approval for.
+
+At this point the approval's app will generate notifications for all
+users that have 'is_staff' True.
+
+NOTE: Yes, we clearly need to have a more flexible set of users you
+      can request approvals from. This is good enough for the first
+      release of this. If you can think of an elegant way to provide
+      lists of who is required to approve any given object instance
+      that would be welcome to hear. I am currently thinking that you
+      can pass a query set somehow to the Approval object and it uses
+      that to generate the list of who to notify as well as to
+      determine who is permitted to approve a specific request.
+
+The requests sent out will have a reference to the url to approve this
+specific request.
+
+NOTE: This requires that the 'sites' app is installed and configured
+      properly such that 'site.domain' will provide the proper prefix to
+      reach views in your project.
+
+The url generated refers to 'approvals.views.act_on_approval' for this
+specific Approval instance.
+
+The view offers up the ApprovalForm (this can be overridden in
+urls.py) on GET. On POST it validates the form, and if it is valid it
+will call the Approval.approve() method for that approval, passing to
+it the approval status, the user requesting the approval, and the
+reason given for the approval. The approval object is updated and the
+'approvals.models.approval_acted_on' signal is sent with the sender
+being the Approval object.
+
+Your code is expected to listen for the
+'approvals.models.approval_acted_on' signal and see if it is an
+approval that you are watching for. Presumably you would do this by
+checking the Approval.needs_approval GenericForeignKey relationship
+that was established when the Approval was created. Your code is then
+free to do whatever it feels that it needs to do to finish the
+approval process.
+
+We provide specific forms and hooks for using the 'approvals' app in
+combination with Jeremy Bennett's django-registration app:
+
+Add to your project's urls.py:
+
+    (r'^accounts/', include('approvals.accounts_urls'))
+
+INSTEAD OF:
+
+    (r'^accounts/', include('registration.urls'))
+
+Naturally you can take the provided 'approvals.acounts_urls' and copy
+it and tweak it to your environment and includes that instead of the
+exact one provided.
+
+This hooks in to django-registraton by using a custom RegistrationForm
+subclass that prevents an email being sent when a new user
+registration occurs. Instead it creates an Approval object that refers
+to the RegistrationProfile that needs approval.
+
+Also, 'approvals.accounts_urls' also hooks in to the
+'approval_acted_on' signal. When this signal is sent the function
+'approvals.actions.register_user' will be called.
+
+'approvals.actions.register_user' will check to see if the
+registration profile was approved. If it was it will then send the
+activation email for that account.
+
+NOTE: If you are using django-registration 0.6 or earlier you will
+      need to apply a patch to django-registration that moves the
+      process of sending email outside of the new user creation in the
+      RegistrationManager to a method on the RegistrationProfile. See
+      'registration.patch' in the django-approvals directory.
+
+
+Dependencies
+============
+
+We depends on the django.contrib.site app for generating the URL's to
+send in the notifications to users.
+
+We have conditional imports of jtauber's 'django-notifications' for
+sending notifcations. If this app is not installed django-approvals
+will continue to work. See:
+
+   http://django-notification.googlecode.com/svn
+
+We have conditional imports of 'django-mailer' for sending email (we
+use its 'send_mail' function instead of
+'django.core.mail.send_mail'. However, this is only used if
+django-notifications is not installed. See:
+
+   http://django-mailer.googlecode.com/svn
+
+NOTE: The order goes: 'try to send notifications via
+      django-notifications. If that fails, try to send out emails
+      using django-mailer. If that fails, try to send out emails via
+      django.core.mail.send_mail.
+
+'django-approvals' has conditional imports of 'django-registration' to
+provide an approval process for user registrations.

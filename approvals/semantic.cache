@@ -1,0 +1,103 @@
+;; Object approvals/
+;; SEMANTICDB Tags save file
+(semanticdb-project-database-file "approvals/"
+  :tables (list 
+   (semanticdb-table "models.py"
+    :major-mode 'python-mode
+    :tags '(("datetime" include nil (dependency-file none) [88 103]) ("django.db" include nil (dependency-file none) [124 152]) ("django.db.models" include nil (dependency-file none) [153 191]) ("django.template.loader" include nil (dependency-file none) [192 243]) ("django.utils.translation" include nil (dependency-file none) [244 299]) ("django.dispatch" include nil (dependency-file none) [300 322]) ("django.contrib.auth.models" include nil (dependency-file none) [342 385]) ("django.contrib.sites.models" include nil (dependency-file none) [386 430]) ("django.contrib.contenttypes.models" include nil (dependency-file none) [431 489]) ("django.contrib.contenttypes" include nil (dependency-file none) [490 537]) ("try" code nil nil [655 756]) ("try" code nil nil [814 915]) ("approval_acted_on" variable nil nil [1035 1079]) ("Approval" type (:superclasses ("models.Model") :members (("\"\"\"
+    This object represents some other object in the database
+
+    XXX Right now we assume that the people that need to approve something
+        must have the is_staff bit set. We should make it so that you can
+        specify a list of who is allowed to approve something.
+    \"\"\"" code nil (reparse-symbol indented_block_body) [1186 1471]) ("approved" variable nil (reparse-symbol indented_block_body) [1476 1760]) ("acted_on_by" variable nil (reparse-symbol indented_block_body) [1765 2116]) ("created" variable nil (reparse-symbol indented_block_body) [2121 2238]) ("modified" variable nil (reparse-symbol indented_block_body) [2243 2306]) ("when_acted_on" variable nil (reparse-symbol indented_block_body) [2311 2434]) ("reason" variable nil (reparse-symbol indented_block_body) [2439 2766]) ("content_type" variable nil (reparse-symbol indented_block_body) [3019 3135]) ("object_id" variable nil (reparse-symbol indented_block_body) [3140 3195]) ("needs_approval" variable nil (reparse-symbol indented_block_body) [3200 3271]) ("Meta" type (:members (("verbose_name" variable nil (reparse-symbol indented_block_body) [3297 3325]) ("verbose_name_plural" variable nil (reparse-symbol indented_block_body) [3334 3370]) ("ordering" variable nil (reparse-symbol indented_block_body) [3379 3401])) :type "class") (reparse-symbol indented_block_body) [3277 3402]) ("__unicode__" function (:arguments (("self" variable nil (reparse-symbol function_parameters) [3502 3506]))) (reparse-symbol indented_block_body) [3486 3745]) ("permalink" code nil (reparse-symbol indented_block_body) [3830 3839]) ("act_on_url" function (:arguments (("self" variable nil (reparse-symbol function_parameters) [3859 3863]))) (reparse-symbol indented_block_body) [3844 4050]) ("save" function (:arguments (("self" variable nil (reparse-symbol function_parameters) [4143 4147]) ("force_insert" variable nil (reparse-symbol function_parameters) [4149 4161]) ("force_update" variable nil (reparse-symbol function_parameters) [4171 4183]))) (reparse-symbol indented_block_body) [4134 6267]) ("approve" function (:arguments (("self" variable nil (reparse-symbol function_parameters) [6363 6367]) ("approval_status" variable nil (reparse-symbol function_parameters) [6369 6384]) ("approver" variable nil (reparse-symbol function_parameters) [6386 6394]) ("reason" variable nil (reparse-symbol function_parameters) [6396 6402]))) (reparse-symbol indented_block_body) [6351 7625])) :type "class") nil [1152 7625]))
+    :file "models.py"
+    :pointmax 7627
+    :unmatched-syntax 'nil
+    )
+   (semanticdb-table "views.py"
+    :major-mode 'python-mode
+    :tags '(("django.conf" include nil (dependency-file none) [78 110]) ("django.http" include nil (dependency-file none) [111 155]) ("django.http" include nil (dependency-file none) [156 192]) ("django.shortcuts" include nil (dependency-file none) [193 240]) ("django.shortcuts" include nil (dependency-file none) [241 287]) ("django.template.loader" include nil (dependency-file none) [288 335]) ("django.template" include nil (dependency-file none) [336 378]) ("django.core.urlresolvers" include nil (dependency-file none) [379 423]) ("approvals.forms" include nil (dependency-file none) [442 482]) ("approvals.models" include nil (dependency-file none) [502 539]) ("act_on_approval" function (:arguments (("request" variable nil (reparse-symbol function_parameters) [641 648]) ("object_id" variable nil (reparse-symbol function_parameters) [650 659]) ("template_name" variable nil (reparse-symbol function_parameters) [681 694]) ("form_class" variable nil (reparse-symbol function_parameters) [751 761]) ("extra_context" variable nil (reparse-symbol function_parameters) [798 811]))) nil [621 2315]))
+    :file "views.py"
+    :pointmax 2315
+    :unmatched-syntax 'nil
+    )
+   (semanticdb-table "forms.py"
+    :major-mode 'python-mode
+    :tags '(("\"\"\"
+Forms for use by the django-based approvals app.
+
+The approvals app provides a somewhat generic interface for having a
+class of users approve some items that are pending approval.
+
+We also provide a subclass of the registration app form if the
+registration module can be imported which creates a form that requires
+approvals for membership registrations.
+
+\"\"\"" code nil nil [60 423]) ("django" include nil nil [444 468]) ("django.utils.translation" include nil nil [469 524]) ("django.contrib.auth.models" include nil nil [544 587]) ("approvals.models" include nil nil [588 625]) ("try" code nil nil [802 875]) ("ApprovalForm" type (:superclasses ("forms.Form") :members (("\"\"\"
+    To act on an approval you need to either mark it as approved or not.
+    This is a simple base form with a single boolean field to do that.
+    \"\"\"" code nil (reparse-symbol indented_block_body) [983 1138]) ("approved" variable nil (reparse-symbol indented_block_body) [1143 1216]) ("reason" variable nil (reparse-symbol indented_block_body) [1221 1332])) :type "class") nil [947 1333]) ("if" code nil nil [1405 4348]))
+    :file "forms.py"
+    :pointmax 4348
+    :unmatched-syntax 'nil
+    )
+   (semanticdb-table "accounts_urls.py"
+    :major-mode 'python-mode
+    :tags '(("\"\"\"
+URLConf for Django user registration and authentication.
+
+Recommended usage is a call to ``include()`` in your project's root
+URLConf to include this URLConf for any URL beginning with
+``/accounts/``.
+
+This is based on the urls.py from the james bennett's registration
+application. It for the most part is identical.
+
+The changes are for passing custom templates and forms in to the registration
+URL.
+\"\"\"" code nil nil [1 409]) ("django.conf.urls.defaults" include nil nil [412 451]) ("django.views.generic.simple" include nil nil [452 510]) ("django.contrib.auth" include nil nil [511 562]) ("django.views.generic.list_detail" include nil nil [563 619]) ("registration.views" include nil nil [621 660]) ("registration.views" include nil nil [661 700]) ("approvals.forms" include nil nil [702 759]) ("approvals.models" include nil nil [1113 1169]) ("approvals.decorators" include nil nil [1170 1211]) ("approvals.actions" include nil nil [1212 1255]) ("approval_acted_on" code nil nil [1257 1297]) ("urlpatterns" variable nil nil [1328 3055]))
+    :file "accounts_urls.py"
+    :pointmax 3056
+    :unmatched-syntax 'nil
+    )
+   (semanticdb-table "actions.py"
+    :major-mode 'python-mode
+    :tags '(("\"\"\"
+This module contains some action functions that can be invoked by the
+`approvals.models.approval_acted_on` signal.
+
+These serve partly as working examples and also the initial case that
+the `approvals` app was written for: Requiring approval for a user
+registration.
+\"\"\"" code nil nil [62 336]) ("django.utils.translation" include nil nil [338 393]) ("try" code nil nil [485 597]) ("if" code nil nil [598 2783]))
+    :file "actions.py"
+    :pointmax 2783
+    :unmatched-syntax 'nil
+    )
+   (semanticdb-table "urls.py"
+    :major-mode 'python-mode
+    :tags '(("\"\"\"
+URLConf for Django approvals app.
+
+Recommended usage is a call to ``include()`` in your project's root
+URLConf to include this URLConf for any URL beginning with
+`/approvals/`.
+
+\"\"\"" code nil nil [1 186]) ("django.conf.urls.defaults" include nil (dependency-file none) [187 226]) ("django.views.generic.list_detail" include nil (dependency-file none) [227 283]) ("approvals.views" include nil (dependency-file none) [284 327]) ("approvals.decorators" include nil (dependency-file none) [328 369]) ("approvals.models" include nil (dependency-file none) [371 408]) ("urlpatterns" variable nil nil [488 698]))
+    :file "urls.py"
+    :pointmax 699
+    :unmatched-syntax 'nil
+    )
+   (semanticdb-table "admin.py"
+    :major-mode 'python-mode
+    :tags '(("django.contrib" include nil (dependency-file none) [1 33]) ("approvals.models" include nil (dependency-file none) [35 72]) ("ApprovalAdmin" type (:superclasses ("admin.ModelAdmin") :members (("list_display" variable nil (reparse-symbol indented_block_body) [118 175]) ("list_filter" variable nil (reparse-symbol indented_block_body) [180 284]) ("search_fields" variable nil (reparse-symbol indented_block_body) [289 388])) :type "class") nil [75 389]) ("admin" code nil nil [390 434]))
+    :file "admin.py"
+    :pointmax 435
+    :unmatched-syntax 'nil
+    )
+   )
+  :file "semantic.cache"
+  :semantic-tag-version "2.0pre4"
+  :semanticdb-version "2.0pre4"
+  )
