@@ -1,0 +1,56 @@
+Index: registration/models.py
+===================================================================
+--- registration/models.py	(revision 168)
++++ registration/models.py	(working copy)
+@@ -90,20 +90,8 @@
+             profile_callback(user=new_user)
+         
+         if send_email:
+-            from django.core.mail import send_mail
+-            current_site = Site.objects.get_current()
+-            
+-            subject = render_to_string('registration/activation_email_subject.txt',
+-                                       { 'site': current_site })
+-            # Email subject *must not* contain newlines
+-            subject = ''.join(subject.splitlines())
+-            
+-            message = render_to_string('registration/activation_email.txt',
+-                                       { 'activation_key': registration_profile.activation_key,
+-                                         'expiration_days': settings.ACCOUNT_ACTIVATION_DAYS,
+-                                         'site': current_site })
+-            
+-            send_mail(subject, message, settings.DEFAULT_FROM_EMAIL, [new_user.email])
++            registration_profile.send_email()
++
+         return new_user
+     
+     def create_profile(self, user):
+@@ -200,6 +188,28 @@
+     def __unicode__(self):
+         return u"Registration information for %s" % self.user
+     
++    def send_email(self):
++        """
++        Send the registration activation email to this user.
++        """
++    
++        from django.core.mail import send_mail
++        current_site = Site.objects.get_current()
++
++        subject = render_to_string('registration/activation_email_subject.txt',
++                                   { 'site': current_site })
++        # Email subject *must not* contain newlines
++        subject = ''.join(subject.splitlines())
++
++        message = render_to_string('registration/activation_email.txt',
++                                   { 'activation_key': self.activation_key,
++                                     'expiration_days': settings.ACCOUNT_ACTIVATION_DAYS,
++                                     'site': current_site })
++
++        send_mail(subject, message, settings.DEFAULT_FROM_EMAIL,
++                  [self.user.email])
++        return
++
+     def activation_key_expired(self):
+         """
+         Determine whether this ``RegistrationProfile``'s activation
