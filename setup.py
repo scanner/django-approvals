@@ -28,7 +28,7 @@ for dirpath, dirnames, filenames in os.walk('approvals'):
 
 
 setup(name='django-approvals',
-      version='0.6.1',
+      version='1.1b',
       description='A simple approval system application for Django',
       author='Eric Scanner Luce',
       author_email='scanner@apricot.com',
@@ -43,4 +43,5 @@ setup(name='django-approvals',
                    'Operating System :: OS Independent',
                    'Programming Language :: Python',
                    'Topic :: Utilities'],
+      install_requires=['Django>=1.5',],
       )

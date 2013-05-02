@@ -7,7 +7,6 @@ URLConf to include this URLConf for any URL beginning with
 
 """
 from django.conf.urls.defaults import *
-from django.views.generic.list_detail import object_list
 from approvals.views import act_on_approval
 from approvals.decorators import is_staff
 

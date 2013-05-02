@@ -24,15 +24,14 @@ from django.db.models.signals import post_syncdb
 # keep track of approvals instead of only using email.
 #
 try:
-    from notification import models as notification
+    from notification.models import NoticeType
 
     ########################################################################
     #
     def create_notice_types(sender, **kwargs):
-        notification.create_notice_type("pending_approvals",
-                                        "Pending Approval",
-                                        "There is a new action requiring "
-                                        "approval.")
+        NoticeType.create("pending_approvals",
+                          "Pending Approval",
+                          "There is a new action requiring approval.")
         return
 
     ########################################################################
